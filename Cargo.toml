@@ -1,0 +1,13 @@
+[package]
+name = "com_local_time"
+version = "0.1.0"
+edition = "2021"
+readme = "README.md"
+license = "MIT"
+description = "Implementation of My Country time and each country's clock with a computer clock컴퓨터 시계만으로 우리나라 시간과 각 나라별 시계 구현하기"
+keywords = ["time", "computer time", "UNIX_TIME","SystemTime"]
+documentation = "https://docs.rs/com_local_time"
+repository = "https://github.com/YoungHaKim7/com_local_time"
+homepage = "https://github.com/YoungHaKim7/com_local_time"
+
+[dependencies]
