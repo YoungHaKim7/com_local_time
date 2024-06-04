@@ -199,8 +199,8 @@ pub fn localtime() {
         minutes,
         seconds,
     );
-    // std::io::stdout().flush().unwrap();
-    // sleep(std::time::Duration::from_secs(1));
+    std::io::stdout().flush().unwrap();
+    sleep(std::time::Duration::from_secs(1));
 }
 
 #[cfg(test)]
