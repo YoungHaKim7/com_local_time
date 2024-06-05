@@ -203,6 +203,78 @@ pub fn localtime() {
     sleep(std::time::Duration::from_secs(1));
 }
 
+pub fn ny_time() {
+    let total_sec: u64 = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("Time went backwards")
+        .as_secs();
+
+    let ny_time = total_sec - 18100;
+
+    let mut remaining_sec = ny_time;
+
+    // Calculate the current year
+    let mut year = 1970;
+    while remaining_sec >= SEC_IN_YEAR {
+        let year_seconds = if is_leap_year(year) {
+            SEC_IN_LEAP_YEAR
+        } else {
+            SEC_IN_YEAR
+        };
+        if remaining_sec < year_seconds {
+            break;
+        }
+        remaining_sec -= year_seconds;
+        year += 1;
+    }
+
+    // Calculate the current month and day
+    const DAYS_IN_MONTH: [u64; 12] = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    const DAYS_IN_LEAP_MONTH: [u64; 12] = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    const DAYS_OF_WEEK: [&str; 7] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    const MONTH: [&str; 12] = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+    ];
+
+    let days_in_month = if is_leap_year(year) {
+        &DAYS_IN_LEAP_MONTH
+    } else {
+        &DAYS_IN_MONTH
+    };
+
+    let mut month = 0;
+    let mut days = remaining_sec / SEC_IN_DAY;
+    remaining_sec %= SEC_IN_DAY;
+
+    while month < 12 && days >= days_in_month[month] {
+        days -= days_in_month[month];
+        month += 1;
+    }
+
+    // Calculate the current hour, minute, and second
+    let hours = remaining_sec / SEC_IN_HOUR;
+    remaining_sec %= SEC_IN_HOUR;
+    let minutes = remaining_sec / SEC_IN_MIN;
+    let seconds = remaining_sec % SEC_IN_MIN;
+
+    let day_of_week_cal = (days + 5) % 7;
+    let week_cal = DAYS_OF_WEEK[day_of_week_cal as usize];
+    let month_cal = MONTH[month as usize];
+
+    print!(
+        "\r{}. {}.  {}, {}Yr , {}: {}: {}",
+        month_cal,
+        days + 1,
+        week_cal,
+        year,
+        hours + 1,
+        minutes,
+        seconds,
+    );
+    std::io::stdout().flush().unwrap();
+    sleep(std::time::Duration::from_secs(1));
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -210,6 +282,12 @@ mod tests {
     #[test]
     fn local_time() {
         let result = localtime();
+        println!("{:?}", result);
+    }
+
+    #[test]
+    fn new_york_time() {
+        let result = ny_time();
         println!("{:?}", result);
     }
 
